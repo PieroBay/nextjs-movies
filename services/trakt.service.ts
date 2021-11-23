@@ -14,6 +14,18 @@ export class TraktService {
     public getAccessToken(code: string): Promise<TraktAccessInterface> {
         const model = new TraktPostTokenModel();
         model.code = code;
-        return this.axios.post('https://api.trakt.tv/oauth/token', model.toDto());
+        return this.axios.post('https://api.trakt.tv/oauth/token', model.toAccessDto());
+    }
+
+    public refreshAccessToken(refreshToken: string): Promise<TraktAccessInterface> {
+        const model = new TraktPostTokenModel();
+        model.refreshToken = refreshToken;
+        return this.axios.post('https://api.trakt.tv/oauth/token', model.toRefreshTokenDto());
+    }
+
+    public revokeToken(token: string): Promise<TraktAccessInterface> {
+        const model = new TraktPostTokenModel();
+        model.token = token;
+        return this.axios.post('https://api.trakt.tv/oauth/revoke', model.toRevokeTokenDto());
     }
 }
