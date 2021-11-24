@@ -1,0 +1,17 @@
+.searchBar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px;
+}
+
+.filmList::after {
+    content: "";
+    flex: auto;
+}
+
+.filmList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
