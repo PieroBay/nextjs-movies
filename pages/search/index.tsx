@@ -3,10 +3,11 @@ import {MovieCard} from "../../components/movie-card";
 import {SearchInput} from "../../components/search-input";
 import styles from './Search.module.css';
 import {PropsWithChildren, useState} from "react";
-import {TmdbService} from "../../lib/services/tmdb.service";
-import {map2movie, MergedMovie} from "../../lib/mapper";
-import {TraktService} from "../../lib/services/trakt.service";
+import {TmdbService} from "../../services/tmdb.service";
 import Loading from "../../components/loading";
+import axios from "axios";
+import {TraktService} from "../../services/trakt.service";
+import {MergedMovie} from "../../models/interfaces/common/movie-merged.interface";
 
 export interface SearchPageProps {
     movies: MergedMovie[];
@@ -16,8 +17,8 @@ export interface SearchPageProps {
 
 const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPageProps>) => {
     // services
-    const tmdbService = TmdbService.getInstance();
-    const traktService = TraktService.getInstance();
+    const tmdbService = new TmdbService(axios);
+    const traktService = new TraktService(axios);
     // state
     const [movies, setMovies] = useState<MergedMovie[]>(props.movies);
     const [searchInProgress, setSearchInProgress] = useState(false);
@@ -30,7 +31,7 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
             lastSearchQueue = '';
             const movies = [];
             for (const movieTraktDto of await traktService.getMoviesListSearch(searchText)) {
-                movies.push(map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
+                movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
             }
             setMovies(movies)
             setSearchInProgress(false);
@@ -65,14 +66,14 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
     </div>
 }
 
-export async function getServerSideProps(): Promise<{props: {movies: MergedMovie[]}}> {
-    const tmdbService = TmdbService.getInstance();
-    const traktService = TraktService.getInstance();
+export async function getServerSideProps(): Promise<{ props: { movies: MergedMovie[] } }> {
+    const tmdbService = new TmdbService(axios);
+    const traktService = new TraktService(axios);
 
     const movies = [];
 
     for (const movieTraktDto of await traktService.getMoviesList(10)) {
-        movies.push(map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
+        movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
     }
 
     return {
