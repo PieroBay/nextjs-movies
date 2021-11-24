@@ -1,4 +1,4 @@
-import { environment } from "../env";
+import { environment } from "../../env";
 
 export interface TraktPostDtoInterface {
     code?: string;
@@ -8,7 +8,7 @@ export interface TraktPostDtoInterface {
     client_secret: string;
     redirect_uri: string;
     grant_type: string;
-};
+}
 
 export class TraktPostTokenModel {
     public refreshToken?: string;
