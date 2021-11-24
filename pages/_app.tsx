@@ -1,14 +1,27 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import type { AppProps } from 'next/app';
+import { useState } from 'react';
+import { GlobalStateContext } from '../states/global.state';
 import '../styles/globals.css';
-import ButtonAppBar from "../components/navbar";
+
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <>
+  
+  const tokenStorage = window.localStorage.getItem('token');
+
+  const [globalState, setGlobalState] = useState({
+    token: tokenStorage,
+    update
+  });
+
+  function update(data: any) {
+    setGlobalState(Object.assign({}, globalState, data));
+  }
+
+  return <GlobalStateContext.Provider value={globalState}>
     <CssBaseline />
-    <ButtonAppBar title="Login"/>
     <Component {...pageProps} />
-  </>
+  </GlobalStateContext.Provider>
 }
 
 export default MyApp

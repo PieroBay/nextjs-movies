@@ -1,10 +1,10 @@
-import {Axios, AxiosResponse} from 'axios';
+import { Axios, AxiosResponse } from 'axios';
 import { environment } from '../env';
-import { TraktAccessInterface } from '../models/interfaces/trakt/trakt-access.interface';
 import { TraktPostTokenModel } from '../models/class/trakt-post-token.model';
-import {MovieTraktDto} from "../models/interfaces/trakt/entity.interface";
-import {MovieTmdbDto} from "../models/interfaces/tmdb/movie.interface";
-import {MergedMovie} from "../models/interfaces/common/movie-merged.interface";
+import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
+import { MovieTmdbDto } from "../models/interfaces/tmdb/movie.interface";
+import { MovieTraktDto } from "../models/interfaces/trakt/entity.interface";
+import { TraktAccessInterface } from '../models/interfaces/trakt/trakt-access.interface';
 
 export class TraktService {
     private readonly headers = {
@@ -21,19 +21,19 @@ export class TraktService {
     public getAccessToken(code: string): Promise<TraktAccessInterface> {
         const model = new TraktPostTokenModel();
         model.code = code;
-        return this.axios.post(`${environment.TRAKT_URI}ooauth/token`, model.toAccessDto());
+        return this.axios.post(`${environment.TRAKT_URI}oauth/token`, model.toAccessDto()).then(e => e.data);
     }
 
     public refreshAccessToken(refreshToken: string): Promise<TraktAccessInterface> {
         const model = new TraktPostTokenModel();
         model.refreshToken = refreshToken;
-        return this.axios.post(`${environment.TRAKT_URI}ooauth/token`, model.toRefreshTokenDto());
+        return this.axios.post(`${environment.TRAKT_URI}oauth/token`, model.toRefreshTokenDto());
     }
 
     public revokeToken(token: string): Promise<TraktAccessInterface> {
         const model = new TraktPostTokenModel();
         model.token = token;
-        return this.axios.post(`${environment.TRAKT_URI}ooauth/revoke`, model.toRevokeTokenDto());
+        return this.axios.post(`${environment.TRAKT_URI}oauth/revoke`, model.toRevokeTokenDto());
     }
 
     public async getMoviesList(limit: number = 10) {
