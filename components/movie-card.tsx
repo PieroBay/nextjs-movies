@@ -15,7 +15,7 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
             <CardMedia
                 component="img"
                 height="auto"
-                image={"https://image.tmdb.org/t/p/original/" + this.props.imageUrl}
+                image={"https://image.tmdb.org/t/p/w300/" + this.props.imageUrl}
             />
             <CardContent>
                 <Typography marginBottom={2} variant="h5" noWrap component="div">
