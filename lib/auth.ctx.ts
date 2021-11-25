@@ -2,7 +2,6 @@ import React, {createContext} from "react";
 import {TraktAccessInterface} from "../models/interfaces/trakt/trakt-access.interface";
 import {NextPageContext} from "next";
 
-
 export const COOKIES_KEY = 'authInfo'
 
 export const AuthContext = createContext({
