@@ -1,19 +1,18 @@
-import React from "react";
 import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
+import React from "react";
 import {POSTER_BASE_URL} from "../services/tmdb.service";
 
 export interface MovieCardProps {
     imageUrl?: string;
     title: string;
-    year: string | number;
-    description: string;
-    lang: string;
+    year?: string | number;
+    description?: string;
+    lang?: string;
     id: string;
     onClickDetails: (id: string) => void;
 }
 
 export class MovieCard extends React.Component<MovieCardProps, any> {
-
     constructor(props: MovieCardProps) {
         super(props);
         this.onClickDetail = this.onClickDetail.bind(this);
@@ -28,7 +27,7 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
             <CardMedia
                 component="img"
                 height="auto"
-                image={ POSTER_BASE_URL('w300') + this.props.imageUrl}
+                image={POSTER_BASE_URL('w300') + this.props.imageUrl}
             />
             <CardContent>
                 <Typography marginBottom={2} variant="h5" noWrap component="div">
@@ -36,11 +35,13 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
                         `${this.props.title}`
                     }
                 </Typography>
-                <Typography marginBottom={1} variant="body1" component="div">
-                    {
-                        `(${this.props.year} - ${this.props.lang?.toUpperCase()})`
-                    }
-                </Typography>
+                {(this.props.year) ?
+                    <Typography marginBottom={1} variant="body1" component="div">
+                        {
+                            `(${this.props.year} - ${this.props.lang?.toUpperCase()})`
+                        }
+                    </Typography>
+                    : ''}
                 <Typography variant="body2" align={"justify"}>
                     {this.props.description}
                 </Typography>

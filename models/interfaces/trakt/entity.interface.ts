@@ -1,4 +1,4 @@
-import {EntityTypeEnum} from "../../enum/entity-type.enum";
+import { EntityTypeEnum } from "../../enum/entity-type.enum";
 
 export interface EntityListTraktDto {
     title: string;
@@ -20,6 +20,12 @@ export interface MovieTraktDto {
     title: string;
     year: number;
     ids: TraktIdsDto;
+}
+
+export interface MovieShowWatchedTraktDto {
+    last_watched_at: string;
+    movie?: MovieTraktDto;
+    show?: ShowTraktDto;
 }
 
 export interface ShowTraktDto {

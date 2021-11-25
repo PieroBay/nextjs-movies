@@ -9,14 +9,23 @@ import {getDetailTemplate} from "../../components/movie-detail";
 import {Button, Container, IconButton} from "@mui/material";
 import Icon from "@mui/material/Icon";
 import styles from "./Detail.module.css";
+import {useAuth} from "../../lib/auth.ctx";
+import {TraktService} from "../../services/trakt.service";
 
 
 const MovieDetail: NextPage = () => {
     const router = useRouter()
     // services
     const tmdbService = new TmdbService(axios);
+    let traktService: TraktService | undefined = undefined;
     // state
     const [entity, setEntity] = useState<MovieTmdbDto | undefined>(undefined);
+
+    const {auth} = useAuth();
+
+    if (auth) {
+        traktService = new TraktService(axios, auth);
+    }
 
     useEffect(() => {
         const fetchDetail = async (detailId: number) => (setEntity(await tmdbService.getMovieDetails(detailId)));
@@ -37,7 +46,10 @@ const MovieDetail: NextPage = () => {
     }
 
     async function addToWatchList() {
-
+        if (traktService) {
+            const data = await traktService.setWatched('kqsldjlkqsdljkdsqjlk');
+            console.log("--->", data)
+        }
     }
 
     return <Container>
@@ -48,14 +60,18 @@ const MovieDetail: NextPage = () => {
         {
             !entity ? <Loading/> : getDetailTemplate(entity)
         }
-        <div className={styles.actionSection}>
-            <Button variant="contained" endIcon={<Icon>visibility</Icon>}>
-                I saw it
-            </Button>
-            <Button variant="contained" color={"success"} sx={{marginLeft:1}} endIcon={<Icon>add</Icon>}>
-                add it to watch list
-            </Button>
-        </div>
+        {
+            auth && <div className={styles.actionSection}>
+                <Button variant="contained" endIcon={<Icon>visibility</Icon>}>
+                    I saw it
+                </Button>
+                <Button variant="contained" onClick={addToWatchList} color={"success"} sx={{marginLeft: 1}}
+                        endIcon={<Icon>add</Icon>}>
+                    add it to watch list
+                </Button>
+            </div>
+        }
+
     </Container>
 
 }

@@ -58,7 +58,7 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
                            year={n.year}
                            imageUrl={n.poster_path}
                            lang={n.original_language}
-                           id={n.id}
+                           id={n.id_tmdb}
                            onClickDetails={onClickDetail}
                 />)
             }
@@ -82,8 +82,11 @@ export async function getServerSideProps(ctx: NextPageContext): Promise<{ props:
 
     const movies = [];
     for (const movieTraktDto of await traktService.getMoviesList(10)) {
-        movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
+        console.log(movieTraktDto)
+        movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)));
     }
+
+
 
     return {
         props: {

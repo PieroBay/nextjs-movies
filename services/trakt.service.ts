@@ -1,18 +1,57 @@
-import { Axios, AxiosResponse } from 'axios';
-import { environment } from '../env';
-import { TraktPostTokenModel } from '../models/class/trakt-post-token.model';
-import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
-import { MovieTmdbDto } from "../models/interfaces/tmdb/movie.interface";
-import { MovieTraktDto } from "../models/interfaces/trakt/entity.interface";
-import { TraktAccessInterface } from '../models/interfaces/trakt/trakt-access.interface';
+import {Axios, AxiosResponse} from 'axios';
+import {environment} from '../env';
+import {TraktPostTokenModel} from '../models/class/trakt-post-token.model';
+import {EntityTypeEnum} from '../models/enum/entity-type.enum';
+import {MergedMovie} from "../models/interfaces/common/movie-merged.interface";
+import {MovieTmdbDto} from "../models/interfaces/tmdb/movie.interface";
+import {MovieTraktDto} from "../models/interfaces/trakt/entity.interface";
+import {TraktAccessInterface} from '../models/interfaces/trakt/trakt-access.interface';
 
 export class TraktService {
-    private readonly headers = {
+    private baseHeaders = {
         'trakt-api-key': '9c6b0fdd6caf6917f92aa47ecb11309ae3f844259fe9694efea7792b2dd54192',
         'trakt-api-version': '2'
     }
+    private readonly headers = this.auth ? {
+        ...this.baseHeaders, Authorization: 'Bearer ' + this.auth.access_token
+    } : this.baseHeaders;
 
-    constructor(private axios: Axios) {}
+    constructor(private axios: Axios, private auth?: TraktAccessInterface) {
+    }
+
+    private get test(): any {
+        return {
+            "movies": [
+                {
+                    "title": "Batman Begins",
+                    "year": 2005,
+                    "ids": {
+                        "trakt": 1,
+                        "slug": "batman-begins-2005",
+                        "imdb": "tt0372784",
+                        "tmdb": 272
+                    }
+                },
+                {
+                    "ids": {
+                        "imdb": "tt0000111"
+                    }
+                }
+            ]
+        }
+    }
+
+    public static map2movie(traktDto: MovieTraktDto, tmdbDto: MovieTmdbDto): MergedMovie {
+        return {
+            poster_path: tmdbDto.poster_path,
+            id: traktDto.ids.trakt,
+            overview: tmdbDto.overview,
+            title: traktDto.title,
+            year: traktDto.year,
+            original_language: tmdbDto.original_language,
+            id_tmdb: traktDto.ids.tmdb.toString()
+        }
+    }
 
     public genOauthLink(): string {
         return `${environment.TRAKT_URI}oauth/authorize?response_type=code&client_id=${environment.CLIENT_ID}&redirect_uri=${environment.REDIRECT_URI}`;
@@ -36,24 +75,22 @@ export class TraktService {
         return this.axios.post(`${environment.TRAKT_URI}oauth/revoke`, model.toRevokeTokenDto());
     }
 
-    public async getMoviesList(limit: number = 10) {
-        return this.axios.get('https://api.trakt.tv/movies/trending?limit=' + limit, {headers: this.headers})
+    public async getMoviesList(limit: number = 10): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}movies/trending?limit=${limit}`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => v.movie as MovieTraktDto));
     }
 
-    public async getMoviesListSearch(search: string) {
-        return this.axios.get('https://api.trakt.tv/movies/trending?limit=10&query=' + search, {headers: this.headers})
+    public async getMoviesListSearch(search: string): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}movies/trending?limit=10&query=${search}`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => v.movie as MovieTraktDto));
     }
 
-    public static map2movie(traktDto: MovieTraktDto, tmdbDto: MovieTmdbDto): MergedMovie {
-        return {
-            poster_path: tmdbDto.poster_path,
-            overview: tmdbDto.overview,
-            title: traktDto.title,
-            year: traktDto.year,
-            original_language: tmdbDto.original_language,
-            id: traktDto.ids.tmdb.toString()
-        }
+    public async getWatched(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}users/pierobay/history/${type}s`, {headers: this.headers})
+            .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
+    }
+
+    public async setWatched(traktId: string): Promise<any> {
+        return this.axios.post(`${environment.TRAKT_URI}sync/watchlist`, this.test, {headers: this.headers})
     }
 }

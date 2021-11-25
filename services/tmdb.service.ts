@@ -1,5 +1,5 @@
-import {MovieTmdbDto} from "../models/interfaces/tmdb/movie.interface";
-import {Axios, AxiosResponse} from "axios";
+import { Axios, AxiosResponse } from "axios";
+import { MovieTmdbDto } from "../models/interfaces/tmdb/movie.interface";
 
 
 export const POSTER_BASE_URL = (definition: 'w300' | 'w500' |'original' = 'original' ) => `https://image.tmdb.org/t/p/${definition}`
@@ -12,6 +12,11 @@ export class TmdbService {
 
     public async getMovieDetails(id: number): Promise<MovieTmdbDto> {
         return this.axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${this.apiKey}`)
+            .then((res: AxiosResponse) => res.data);
+    }
+
+    public async getShowDetails(id: number): Promise<MovieTmdbDto> {
+        return this.axios.get(`https://api.themoviedb.org/3/tv/${id}?api_key=${this.apiKey}`)
             .then((res: AxiosResponse) => res.data);
     }
 }
