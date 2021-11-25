@@ -4,4 +4,5 @@ export interface MergedMovie {
     title: string;
     year: number;
     original_language: string;
+    id: string;
 }

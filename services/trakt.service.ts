@@ -52,7 +52,8 @@ export class TraktService {
             overview: tmdbDto.overview,
             title: traktDto.title,
             year: traktDto.year,
-            original_language: tmdbDto.original_language
+            original_language: tmdbDto.original_language,
+            id: traktDto.ids.tmdb.toString()
         }
     }
 }

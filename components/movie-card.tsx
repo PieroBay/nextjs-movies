@@ -7,9 +7,21 @@ export interface MovieCardProps {
     year: string | number;
     description: string;
     lang: string;
+    id: string;
+    onClickDetails: (id: string) => void;
 }
 
 export class MovieCard extends React.Component<MovieCardProps, any> {
+
+    constructor(props: MovieCardProps) {
+        super(props);
+        this.onClickDetail = this.onClickDetail.bind(this);
+    }
+
+    onClickDetail() {
+        this.props.onClickDetails(this.props.id);
+    }
+
     render() {
         return <Card sx={{maxWidth: 345, margin: 1}}>
             <CardMedia
@@ -34,7 +46,7 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
             </CardContent>
             <div style={{flexGrow: 1}}/>
             <CardActions sx={{justifyContent: 'flex-end'}}>
-                <Button size="small">Details</Button>
+                <Button size="small" onClick={this.onClickDetail}>Details</Button>
             </CardActions>
         </Card>;
     }
