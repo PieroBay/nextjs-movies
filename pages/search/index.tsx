@@ -1,4 +1,4 @@
-import type {NextPage} from 'next'
+import type {NextPage, NextPageContext} from 'next'
 import {MovieCard} from "../../components/movie-card";
 import {SearchInput} from "../../components/search-input";
 import styles from './Search.module.css';
@@ -66,12 +66,12 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
     </div>
 }
 
-export async function getServerSideProps(): Promise<{ props: { movies: MergedMovie[] } }> {
+export async function getServerSideProps(ctx: NextPageContext): Promise<{ props: { movies: MergedMovie[] } }> {
     const tmdbService = new TmdbService(axios);
     const traktService = new TraktService(axios);
+    // const auth = authFromNextPageCtx(ctx);
 
     const movies = [];
-
     for (const movieTraktDto of await traktService.getMoviesList(10)) {
         movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
     }
