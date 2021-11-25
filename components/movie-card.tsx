@@ -1,5 +1,6 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
 import React from "react";
+import {POSTER_BASE_URL} from "../services/tmdb.service";
 
 export interface MovieCardProps {
     imageUrl?: string;
@@ -7,15 +8,26 @@ export interface MovieCardProps {
     year?: string | number;
     description?: string;
     lang?: string;
+    id: string;
+    onClickDetails: (id: string) => void;
 }
 
 export class MovieCard extends React.Component<MovieCardProps, any> {
+    constructor(props: MovieCardProps) {
+        super(props);
+        this.onClickDetail = this.onClickDetail.bind(this);
+    }
+
+    onClickDetail() {
+        this.props.onClickDetails(this.props.id);
+    }
+
     render() {
         return <Card sx={{maxWidth: 345, margin: 1}}>
             <CardMedia
                 component="img"
                 height="auto"
-                image={"https://image.tmdb.org/t/p/w300/" + this.props.imageUrl}
+                image={POSTER_BASE_URL('w300') + this.props.imageUrl}
             />
             <CardContent>
                 <Typography marginBottom={2} variant="h5" noWrap component="div">
@@ -23,7 +35,6 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
                         `${this.props.title}`
                     }
                 </Typography>
-
                 {(this.props.year) ?
                     <Typography marginBottom={1} variant="body1" component="div">
                         {
@@ -31,16 +42,13 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
                         }
                     </Typography>
                     : ''}
-                    
-                {(this.props.year) ?
-                    <Typography variant="body2" align={"justify"}>
-                        {this.props.description}
-                    </Typography>
-                : ''}
+                <Typography variant="body2" align={"justify"}>
+                    {this.props.description}
+                </Typography>
             </CardContent>
             <div style={{flexGrow: 1}}/>
             <CardActions sx={{justifyContent: 'flex-end'}}>
-                <Button size="small">Details</Button>
+                <Button size="small" onClick={this.onClickDetail}>Details</Button>
             </CardActions>
         </Card>;
     }

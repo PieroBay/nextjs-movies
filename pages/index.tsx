@@ -1,19 +1,21 @@
-import { Container, Typography } from "@mui/material";
+import {Container, Typography} from "@mui/material";
 import axios from "axios";
-import type { NextPage, NextPageContext } from 'next';
-import { useEffect, useState } from "react";
+import type {NextPage, NextPageContext} from 'next';
+import {useEffect, useState} from "react";
 import Loading from "../components/loading";
-import { MovieCard } from "../components/movie-card";
-import { authFromNextPageCtx, redirectToLogin } from '../lib/auth.ctx';
-import { EntityTypeEnum } from "../models/enum/entity-type.enum";
-import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
-import { TmdbService } from '../services/tmdb.service';
-import { TraktService } from '../services/trakt.service';
+import {MovieCard} from "../components/movie-card";
+import {authFromNextPageCtx, redirectToLogin} from '../lib/auth.ctx';
+import {EntityTypeEnum} from "../models/enum/entity-type.enum";
+import {MergedMovie} from "../models/interfaces/common/movie-merged.interface";
+import {TmdbService} from '../services/tmdb.service';
+import {TraktService} from '../services/trakt.service';
 import styles from './search/Search.module.css';
+import {useRouter} from "next/dist/client/router";
 
 const Home: NextPage = () => {
     const tmdbService = new TmdbService(axios);
     const traktService = new TraktService(axios);
+    const router = useRouter();
 
     // state
     const [movies, setMovies] = useState<MergedMovie[]>();
@@ -45,12 +47,22 @@ const Home: NextPage = () => {
         getWatchedMoviesShow(EntityTypeEnum.SHOW);
     }, [])
 
+    function onClickDetail(entityId: string): void {
+        router.push('/details/' + entityId);
+    }
+
+
     function getMoviesTemplate(movies: MergedMovie[]): JSX.Element {
         return <div className={styles.filmListLine}>
             {movies.map((n) => {
-                return <MovieCard key={n.id}
+                return <MovieCard
+                    key={n.id}
+                    id={n.id_tmdb}
                     title={n.title}
-                    imageUrl={n.poster_path} /> })
+                    imageUrl={n.poster_path}
+                    onClickDetails={onClickDetail}
+                />
+            })
             }
         </div>
     }
@@ -59,14 +71,14 @@ const Home: NextPage = () => {
         <Typography align="center" variant="h1">Dashboard</Typography>
         <Container maxWidth="md">
             <Typography align="center" variant="h3">Derniers Films vues</Typography>
-           {
-               (!searchInProgress || !searchInProgress.movie) && movies ? getMoviesTemplate(movies) : <Loading/>
-           }
+            {
+                (!searchInProgress || !searchInProgress.movie) && movies ? getMoviesTemplate(movies) : <Loading/>
+            }
             <Typography align="center" variant="h3">Derniers épisodes vues</Typography>
-           {
-               (!searchInProgress || !searchInProgress.show) && series ? getMoviesTemplate(series) : <Loading/>
-           }
-           
+            {
+                (!searchInProgress || !searchInProgress.show) && series ? getMoviesTemplate(series) : <Loading/>
+            }
+
         </Container>
     </div>
 
@@ -75,7 +87,7 @@ const Home: NextPage = () => {
 Home.getInitialProps = async (ctx: NextPageContext) => {
     const auth = authFromNextPageCtx(ctx);
     const res = ctx.res;
-    if(!auth) {
+    if (!auth) {
         console.log(auth)
         redirectToLogin(res!);
     }

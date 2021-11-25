@@ -8,6 +8,7 @@ import Loading from "../../components/loading";
 import axios from "axios";
 import {TraktService} from "../../services/trakt.service";
 import {MergedMovie} from "../../models/interfaces/common/movie-merged.interface";
+import {useRouter} from "next/dist/client/router";
 
 export interface SearchPageProps {
     movies: MergedMovie[];
@@ -24,6 +25,7 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
     const [searchInProgress, setSearchInProgress] = useState(false);
     // props
     let lastSearchQueue = ''
+    const router = useRouter();
 
     async function onSearchChange(searchText: string) {
         if (!searchInProgress) {
@@ -43,15 +45,22 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
         }
     }
 
+    function onClickDetail(entityId: string): void {
+        router.push('/details/' + entityId);
+    }
+
     function getMoviesTemplate(movies: MergedMovie[]): JSX.Element {
         return <div className={styles.filmList}>
             {movies.map((n) =>
-                <MovieCard key={n.poster_path}
+                <MovieCard key={n.id}
                            title={n.title}
                            description={n.overview}
                            year={n.year}
                            imageUrl={n.poster_path}
-                           lang={n.original_language}/>)
+                           lang={n.original_language}
+                           id={n.id_tmdb}
+                           onClickDetails={onClickDetail}
+                />)
             }
         </div>
     }
@@ -73,8 +82,11 @@ export async function getServerSideProps(ctx: NextPageContext): Promise<{ props:
 
     const movies = [];
     for (const movieTraktDto of await traktService.getMoviesList(10)) {
-        movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
+        console.log(movieTraktDto)
+        movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)));
     }
+
+
 
     return {
         props: {

@@ -17,7 +17,6 @@ export interface TraktIdsDto {
 }
 
 export interface MovieTraktDto {
-    id: number;
     title: string;
     year: number;
     ids: TraktIdsDto;
