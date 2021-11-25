@@ -1,6 +1,8 @@
-import React, {createContext} from "react";
-import {TraktAccessInterface} from "../models/interfaces/trakt/trakt-access.interface";
-import {NextPageContext} from "next";
+import { ServerResponse } from "http";
+import { NextPageContext } from "next";
+import router from "next/router";
+import React, { createContext } from "react";
+import { TraktAccessInterface } from "../models/interfaces/trakt/trakt-access.interface";
 
 export const COOKIES_KEY = 'authInfo'
 
@@ -33,4 +35,13 @@ const parseCookie = (str: string) =>
 
 export interface AuthCookie {
     [COOKIES_KEY: string]: string;
+}
+
+export const redirectToLogin = async (res?: ServerResponse) => {
+    if (res) {
+        res.writeHead(302, {Location: '/login'})
+        res.end()
+    } else {
+        await router.push('/login');
+    }
 }

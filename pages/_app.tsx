@@ -1,12 +1,12 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import type {AppProps} from 'next/app';
-import '../styles/globals.css';
-import {AuthContext, COOKIES_KEY} from "../lib/auth.ctx";
-import {useEffect, useState} from "react";
-import {TraktAccessInterface} from "../models/interfaces/trakt/trakt-access.interface";
-import cookies from 'js-cookie'
+import cookies from 'js-cookie';
+import type { AppProps } from 'next/app';
+import { useRouter } from "next/dist/client/router";
+import { useEffect, useState } from "react";
 import ButtonAppBar from "../components/navbar";
-import {useRouter} from "next/dist/client/router";
+import { AuthContext, COOKIES_KEY } from "../lib/auth.ctx";
+import { TraktAccessInterface } from "../models/interfaces/trakt/trakt-access.interface";
+import '../styles/globals.css';
 
 function MyApp({Component, pageProps}: AppProps) {
     const [auth, setAuth] = useState<TraktAccessInterface | undefined>(undefined)
@@ -29,6 +29,7 @@ function MyApp({Component, pageProps}: AppProps) {
     function userLoggedOut() {
         setAuth(undefined)
         cookies.remove(COOKIES_KEY);
+        router.push('/login');
     }
 
     return <AuthContext.Provider value={{auth, userLoggedIn, userLoggedOut}}>

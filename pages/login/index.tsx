@@ -1,12 +1,12 @@
-import {Button, Container, Typography} from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
 import axios from 'axios';
-import type {NextPage} from 'next';
-import {useRouter} from "next/dist/client/router";
-import {useEffect, useMemo} from "react";
+import type { NextPage } from 'next';
+import { useRouter } from "next/dist/client/router";
+import { useEffect, useMemo } from "react";
 import BasicCard from "../../components/card";
-import {TraktAccessInterface} from "../../models/interfaces/trakt/trakt-access.interface";
-import {TraktService} from "../../services/trakt.service";
-import {useAuth} from "../../lib/auth.ctx";
+import { useAuth } from "../../lib/auth.ctx";
+import { TraktAccessInterface } from "../../models/interfaces/trakt/trakt-access.interface";
+import { TraktService } from "../../services/trakt.service";
 
 const Login: NextPage = () => {
     const traktService = useMemo<TraktService>(() => new TraktService(axios), [axios]);
@@ -21,7 +21,7 @@ const Login: NextPage = () => {
         if (router.query.code) {
             traktService.getAccessToken(router.query.code as string).then(async (e: TraktAccessInterface) => {
                 userLoggedIn(e);
-                await router.push('/login');
+                await router.push('/');
             })
         }
     }, [router.query.code]);

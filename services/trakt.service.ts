@@ -49,12 +49,13 @@ export class TraktService {
 
     public async getWatched(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
         return this.axios.get(`${environment.TRAKT_URI}users/pierobay/history/${type}s`, {headers: this.headers})
-            .then((res: AxiosResponse) => res.data.map((v: any) => v[type] as MovieTraktDto));
+            .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
     }
 
     public static map2movie(traktDto: MovieTraktDto, tmdbDto: MovieTmdbDto): MergedMovie {
         return {
             poster_path: tmdbDto.poster_path,
+            id: traktDto.id,
             overview: tmdbDto.overview,
             title: traktDto.title,
             year: traktDto.year,
