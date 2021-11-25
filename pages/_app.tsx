@@ -1,27 +1,41 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import type { AppProps } from 'next/app';
-import { useState } from 'react';
-import { GlobalStateContext } from '../states/global.state';
+import type {AppProps} from 'next/app';
 import '../styles/globals.css';
+import {AuthContext, COOKIES_KEY} from "../lib/auth.ctx";
+import {useEffect, useState} from "react";
+import {TraktAccessInterface} from "../models/interfaces/trakt/trakt-access.interface";
+import cookies from 'js-cookie'
+import ButtonAppBar from "../components/navbar";
+import {useRouter} from "next/dist/client/router";
 
+function MyApp({Component, pageProps}: AppProps) {
+    const [auth, setAuth] = useState<TraktAccessInterface | undefined>(undefined)
+    const router = useRouter();
 
-function MyApp({ Component, pageProps }: AppProps) {
-  
-  // const tokenStorage = window.localStorage.getItem('token');
+    useEffect(() => {
+        const authSaved = cookies.get(COOKIES_KEY)
+        if (authSaved) {
+            setAuth(JSON.parse(authSaved))
+        }
+    }, [])
 
-  const [globalState, setGlobalState] = useState({
-    token: null,
-    update
-  });
+    function userLoggedIn(auth: TraktAccessInterface) {
+        if (auth) {
+            setAuth(auth);
+            cookies.set(COOKIES_KEY, JSON.stringify(auth));
+        }
+    }
 
-  function update(data: any) {
-    setGlobalState(Object.assign({}, globalState, data));
-  }
+    function userLoggedOut() {
+        setAuth(undefined)
+        cookies.remove(COOKIES_KEY);
+    }
 
-  return <GlobalStateContext.Provider value={globalState}>
-    <CssBaseline />
-    <Component {...pageProps} />
-  </GlobalStateContext.Provider>
+    return <AuthContext.Provider value={{auth, userLoggedIn, userLoggedOut}}>
+        <CssBaseline/>
+        <ButtonAppBar title={router.route.replace('/', '')}/>
+        <Component {...pageProps} />
+    </AuthContext.Provider>
 }
 
 export default MyApp
