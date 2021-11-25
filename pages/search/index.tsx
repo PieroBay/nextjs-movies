@@ -47,7 +47,6 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
 
     function onClickDetail(entityId: string): void {
         router.push('/details/' + entityId);
-        console.log('GO TO ', entityId)
     }
 
     function getMoviesTemplate(movies: MergedMovie[]): JSX.Element {

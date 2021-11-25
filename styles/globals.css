@@ -1,21 +1,46 @@
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
 
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-.MuiCard-root{
-  display: flex;
-  flex-direction: column;
+.MuiCard-root {
+    display: flex;
+    flex-direction: column;
+}
+
+.iconAndText {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-height: 36px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+}
+
+.iconAndText :last-child {
+    margin-left: 12px;
+}
+.iconAndTextClickable :last-child {
+    margin-bottom: 0 !important;
+}
+.iconAndTextClickable {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-height: 36px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+    cursor: pointer;
 }

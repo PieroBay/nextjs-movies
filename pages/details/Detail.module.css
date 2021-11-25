@@ -1,0 +1,15 @@
+.topSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.descriptionSection {
+    padding-left: 16px;
+}
+
+.actionSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}

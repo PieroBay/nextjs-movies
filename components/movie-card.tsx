@@ -1,5 +1,6 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
+import {POSTER_BASE_URL} from "../services/tmdb.service";
 
 export interface MovieCardProps {
     imageUrl?: string;
@@ -27,7 +28,7 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
             <CardMedia
                 component="img"
                 height="auto"
-                image={"https://image.tmdb.org/t/p/w300/" + this.props.imageUrl}
+                image={ POSTER_BASE_URL('w300') + this.props.imageUrl}
             />
             <CardContent>
                 <Typography marginBottom={2} variant="h5" noWrap component="div">
