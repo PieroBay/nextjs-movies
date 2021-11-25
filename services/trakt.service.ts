@@ -1,6 +1,7 @@
 import { Axios, AxiosResponse } from 'axios';
 import { environment } from '../env';
 import { TraktPostTokenModel } from '../models/class/trakt-post-token.model';
+import { EntityTypeEnum } from '../models/enum/entity-type.enum';
 import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
 import { MovieTmdbDto } from "../models/interfaces/tmdb/movie.interface";
 import { MovieTraktDto } from "../models/interfaces/trakt/entity.interface";
@@ -36,14 +37,19 @@ export class TraktService {
         return this.axios.post(`${environment.TRAKT_URI}oauth/revoke`, model.toRevokeTokenDto());
     }
 
-    public async getMoviesList(limit: number = 10) {
-        return this.axios.get('https://api.trakt.tv/movies/trending?limit=' + limit, {headers: this.headers})
+    public async getMoviesList(limit: number = 10): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}movies/trending?limit=${limit}`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => v.movie as MovieTraktDto));
     }
 
-    public async getMoviesListSearch(search: string) {
-        return this.axios.get('https://api.trakt.tv/movies/trending?limit=10&query=' + search, {headers: this.headers})
+    public async getMoviesListSearch(search: string): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}movies/trending?limit=10&query=${search}`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => v.movie as MovieTraktDto));
+    }
+
+    public async getWatched(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}users/pierobay/history/${type}s`, {headers: this.headers})
+            .then((res: AxiosResponse) => res.data.map((v: any) => v[type] as MovieTraktDto));
     }
 
     public static map2movie(traktDto: MovieTraktDto, tmdbDto: MovieTmdbDto): MergedMovie {

@@ -7,10 +7,10 @@ import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   
-  const tokenStorage = window.localStorage.getItem('token');
+  // const tokenStorage = window.localStorage.getItem('token');
 
   const [globalState, setGlobalState] = useState({
-    token: tokenStorage,
+    token: null,
     update
   });
 

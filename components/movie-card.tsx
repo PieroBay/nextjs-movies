@@ -1,12 +1,12 @@
+import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import React from "react";
-import {Button, Card, CardActions, CardContent, CardMedia, Typography} from "@mui/material";
 
 export interface MovieCardProps {
     imageUrl?: string;
     title: string;
-    year: string | number;
-    description: string;
-    lang: string;
+    year?: string | number;
+    description?: string;
+    lang?: string;
 }
 
 export class MovieCard extends React.Component<MovieCardProps, any> {
@@ -23,14 +23,20 @@ export class MovieCard extends React.Component<MovieCardProps, any> {
                         `${this.props.title}`
                     }
                 </Typography>
-                <Typography marginBottom={1} variant="body1" component="div">
-                    {
-                        `(${this.props.year} - ${this.props.lang?.toUpperCase()})`
-                    }
-                </Typography>
-                <Typography variant="body2" align={"justify"}>
-                    {this.props.description}
-                </Typography>
+
+                {(this.props.year) ?
+                    <Typography marginBottom={1} variant="body1" component="div">
+                        {
+                            `(${this.props.year} - ${this.props.lang?.toUpperCase()})`
+                        }
+                    </Typography>
+                    : ''}
+                    
+                {(this.props.year) ?
+                    <Typography variant="body2" align={"justify"}>
+                        {this.props.description}
+                    </Typography>
+                : ''}
             </CardContent>
             <div style={{flexGrow: 1}}/>
             <CardActions sx={{justifyContent: 'flex-end'}}>
