@@ -20,6 +20,8 @@ const MovieDetail: NextPage = () => {
     let traktService: TraktService | undefined = undefined;
     // state
     const [entity, setEntity] = useState<MovieTmdbDto | undefined>(undefined);
+    const [isSaw, setIsSaw] = useState<boolean>(false);
+    const [isAlreadyAdded, setIsAlreadyAdded] = useState<boolean>(false);
 
     const {auth} = useAuth();
 
@@ -37,20 +39,34 @@ const MovieDetail: NextPage = () => {
 
     }, [router.query.detailId]);
 
+
     async function goBack() {
-        await router.push('/search');
+        await router.back();
     }
 
     async function markAsSaw() {
-
+        if (traktService) {
+            await traktService.setWatched(entity!.id);
+        }
     }
 
     async function addToWatchList() {
         if (traktService) {
-            const data = await traktService.setWatched('kqsldjlkqsdljkdsqjlk');
-            console.log("--->", data)
+            await traktService.setToWatched(entity!.id);
         }
     }
+
+    const sawItBtn = (isSaw: boolean) => <Button variant="contained" disabled={isSaw} onClick={markAsSaw}
+                                                 endIcon={<Icon>visibility</Icon>}>
+        {isSaw ? 'Already mark as saw' : 'I saw it'}
+    </Button>
+
+    const addToWatchBtn = (isAlreadyAdded: boolean) => <Button variant="contained" disabled={isAlreadyAdded}
+                                                               onClick={addToWatchList} color={"success"}
+                                                               sx={{marginLeft: 1}}
+                                                               endIcon={<Icon>add</Icon>}>
+        {isAlreadyAdded ? 'already in watchlist' : 'add it to watch list'}
+    </Button>
 
     return <Container>
         <IconButton color="primary" onClick={goBack}>
@@ -62,13 +78,8 @@ const MovieDetail: NextPage = () => {
         }
         {
             auth && <div className={styles.actionSection}>
-                <Button variant="contained" endIcon={<Icon>visibility</Icon>}>
-                    I saw it
-                </Button>
-                <Button variant="contained" onClick={addToWatchList} color={"success"} sx={{marginLeft: 1}}
-                        endIcon={<Icon>add</Icon>}>
-                    add it to watch list
-                </Button>
+                {sawItBtn(isSaw)}
+                {addToWatchBtn(isAlreadyAdded)}
             </div>
         }
 
