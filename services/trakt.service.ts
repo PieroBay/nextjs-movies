@@ -8,12 +8,16 @@ import { MovieTraktDto } from "../models/interfaces/trakt/entity.interface";
 import { TraktAccessInterface } from '../models/interfaces/trakt/trakt-access.interface';
 
 export class TraktService {
-    private readonly headers = {
+    private readonly baseHeaders = {
         'trakt-api-key': '9c6b0fdd6caf6917f92aa47ecb11309ae3f844259fe9694efea7792b2dd54192',
         'trakt-api-version': '2'
     }
 
-    constructor(private axios: Axios) {}
+    private readonly headers = this.auth ? {
+        ...this.baseHeaders, Authorization: 'Bearer ' + this.auth.access_token
+    } : this.baseHeaders;
+
+    constructor(private axios: Axios, private auth?: TraktAccessInterface) {}
 
     public genOauthLink(): string {
         return `${environment.TRAKT_URI}oauth/authorize?response_type=code&client_id=${environment.CLIENT_ID}&redirect_uri=${environment.REDIRECT_URI}`;
@@ -48,7 +52,12 @@ export class TraktService {
     }
 
     public async getWatched(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
-        return this.axios.get(`${environment.TRAKT_URI}users/pierobay/history/${type}s`, {headers: this.headers})
+        return this.axios.get(`${environment.TRAKT_URI}sync/history/${type}s`, {headers: this.headers})
+            .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
+    }
+
+    public async getWatchList(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
+        return this.axios.get(`${environment.TRAKT_URI}sync/watchlist/${type}s`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
     }
 

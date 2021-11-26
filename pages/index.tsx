@@ -4,7 +4,7 @@ import type { NextPage, NextPageContext } from 'next';
 import { useEffect, useState } from "react";
 import Loading from "../components/loading";
 import { MovieCard } from "../components/movie-card";
-import { authFromNextPageCtx, redirectToLogin } from '../lib/auth.ctx';
+import { authFromNextPageCtx, redirectToLogin, useAuth } from '../lib/auth.ctx';
 import { EntityTypeEnum } from "../models/enum/entity-type.enum";
 import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
 import { TmdbService } from '../services/tmdb.service';
@@ -13,19 +13,25 @@ import styles from './search/Search.module.css';
 
 const Home: NextPage = () => {
     const tmdbService = new TmdbService(axios);
-    const traktService = new TraktService(axios);
+    let traktService = new TraktService(axios);
+
+    const {auth} = useAuth();
+
+    if (auth) {
+        traktService = new TraktService(axios, auth);
+    }
 
     // state
     const [movies, setMovies] = useState<MergedMovie[]>();
     const [series, setSeries] = useState<MergedMovie[]>();
-    const [searchInProgress, setSearchInProgress] = useState({show: false, movie: false});
+    const [searchInProgress, setSearchInProgress] = useState({show: false, movie: false, watchlist: false});
 
     async function getWatchedMoviesShow(type: EntityTypeEnum) {
         setSearchInProgress({...searchInProgress, [type]: true});
         const movieCalls = [];
         let limit = 5;
 
-        for (const movieTraktDto of await traktService.getWatched(type)) {
+        for (const movieTraktDto of await traktService!.getWatched(type)) {
             if (movieTraktDto && limit > 0) {
                 const tmdbCall = (type === EntityTypeEnum.MOVIE)
                     ? tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)
