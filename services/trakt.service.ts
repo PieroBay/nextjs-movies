@@ -12,33 +12,13 @@ export class TraktService {
         'trakt-api-key': '9c6b0fdd6caf6917f92aa47ecb11309ae3f844259fe9694efea7792b2dd54192',
         'trakt-api-version': '2'
     }
+
     private readonly headers = this.auth ? {
         ...this.baseHeaders, Authorization: 'Bearer ' + this.auth.access_token
     } : this.baseHeaders;
 
     constructor(private axios: Axios, private auth?: TraktAccessInterface) {
-    }
 
-    private get test(): any {
-        return {
-            "movies": [
-                {
-                    "title": "Batman Begins",
-                    "year": 2005,
-                    "ids": {
-                        "trakt": 1,
-                        "slug": "batman-begins-2005",
-                        "imdb": "tt0372784",
-                        "tmdb": 272
-                    }
-                },
-                {
-                    "ids": {
-                        "imdb": "tt0000111"
-                    }
-                }
-            ]
-        }
     }
 
     public static map2movie(traktDto: MovieTraktDto, tmdbDto: MovieTmdbDto): MergedMovie {
@@ -90,7 +70,11 @@ export class TraktService {
             .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
     }
 
-    public async setWatched(traktId: string): Promise<any> {
-        return this.axios.post(`${environment.TRAKT_URI}sync/watchlist`, this.test, {headers: this.headers})
+    public async setToWatched(tmdbId: number): Promise<any> {
+        return this.axios.post(`${environment.TRAKT_URI}sync/history`, {"movies": [{ids: {'tmdb': tmdbId}}]}, {headers: this.headers})
+    }
+
+    public async setWatched(tmdbId: number): Promise<any> {
+        return this.axios.post(`${environment.TRAKT_URI}sync/watchlist`, {"movies": [{ids: {'tmdb': tmdbId}}]}, {headers: this.headers})
     }
 }

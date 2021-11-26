@@ -82,7 +82,6 @@ export async function getServerSideProps(ctx: NextPageContext): Promise<{ props:
 
     const movies = [];
     for (const movieTraktDto of await traktService.getMoviesList(10)) {
-        console.log(movieTraktDto)
         movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)));
     }
 
