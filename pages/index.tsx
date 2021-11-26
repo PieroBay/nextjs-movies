@@ -1,25 +1,19 @@
 import { Container, Typography } from "@mui/material";
 import axios from "axios";
 import type { NextPage, NextPageContext } from 'next';
-import { useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import Loading from "../components/loading";
 import { MovieCard } from "../components/movie-card";
-import { authFromNextPageCtx, redirectToLogin, useAuth } from '../lib/auth.ctx';
+import { authFromNextPageCtx, redirectToLogin } from '../lib/auth.ctx';
 import { EntityTypeEnum } from "../models/enum/entity-type.enum";
 import { MergedMovie } from "../models/interfaces/common/movie-merged.interface";
 import { TmdbService } from '../services/tmdb.service';
 import { TraktService } from '../services/trakt.service';
 import styles from './search/Search.module.css';
 
-const Home: NextPage = () => {
+const Home: NextPage = (props: PropsWithChildren<any>) => {
     const tmdbService = new TmdbService(axios);
-    let traktService = new TraktService(axios);
-
-    const {auth} = useAuth();
-
-    if (auth) {
-        traktService = new TraktService(axios, auth);
-    }
+    const traktService = new TraktService(axios, props.props.auth);
 
     // state
     const [movies, setMovies] = useState<MergedMovie[]>();
@@ -86,7 +80,9 @@ Home.getInitialProps = async (ctx: NextPageContext) => {
         redirectToLogin(res!);
     }
     return {
-        props: {}
+        props: {
+            auth
+        }
     }
 }
 
