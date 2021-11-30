@@ -1,4 +1,4 @@
-import type {NextPage, NextPageContext} from 'next'
+import type {GetStaticProps, NextPage, NextPageContext} from 'next'
 import {MovieCard} from "../../components/movie-card";
 import {SearchInput} from "../../components/search-input";
 import styles from './Search.module.css';
@@ -75,7 +75,7 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
     </div>
 }
 
-export async function getServerSideProps(ctx: NextPageContext): Promise<{ props: { movies: MergedMovie[] } }> {
+export async function getStaticProps(ctx: NextPageContext) {
     const tmdbService = new TmdbService(axios);
     const traktService = new TraktService(axios);
     // const auth = authFromNextPageCtx(ctx);
@@ -90,7 +90,8 @@ export async function getServerSideProps(ctx: NextPageContext): Promise<{ props:
     return {
         props: {
             movies
-        }
+        },
+        revalidate: 60
     }
 }
 

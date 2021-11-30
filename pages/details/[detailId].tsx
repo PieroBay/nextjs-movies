@@ -11,6 +11,7 @@ import Icon from "@mui/material/Icon";
 import styles from "./Detail.module.css";
 import {useAuth} from "../../lib/auth.ctx";
 import {TraktService} from "../../services/trakt.service";
+import {EntityTypeEnum} from "../../models/enum/entity-type.enum";
 
 
 const MovieDetail: NextPage = () => {
@@ -35,10 +36,18 @@ const MovieDetail: NextPage = () => {
 
         if (!isNaN(id)) {
             fetchDetail(id).then();
+            computeIsSaw(id)
         }
 
     }, [router.query.detailId]);
 
+    function computeIsSaw(id: number) {
+        traktService?.getWatched(EntityTypeEnum.MOVIE).then(res => {
+            if (res) {
+                setIsSaw(res.findIndex(m => m.ids.tmdb === id) > -1);
+            }
+        })
+    }
 
     async function goBack() {
         await router.back();
@@ -46,7 +55,14 @@ const MovieDetail: NextPage = () => {
 
     async function markAsSaw() {
         if (traktService) {
-            await traktService.setWatched(entity!.id);
+            if (isSaw) {
+                await traktService.removeWatched(entity!.id);
+                setIsSaw(false)
+            } else {
+                await traktService.setWatched(entity!.id);
+                setIsSaw(true);
+            }
+
         }
     }
 
@@ -56,9 +72,10 @@ const MovieDetail: NextPage = () => {
         }
     }
 
-    const sawItBtn = (isSaw: boolean) => <Button variant="contained" disabled={isSaw} onClick={markAsSaw}
+    const sawItBtn = (isSaw: boolean) => <Button variant="contained" color={isSaw ? "warning" : "primary"}
+                                                 onClick={markAsSaw}
                                                  endIcon={<Icon>visibility</Icon>}>
-        {isSaw ? 'Already mark as saw' : 'I saw it'}
+        {isSaw ? 'Remove from list' : 'I saw it'}
     </Button>
 
     const addToWatchBtn = (isAlreadyAdded: boolean) => <Button variant="contained" disabled={isAlreadyAdded}
@@ -79,7 +96,6 @@ const MovieDetail: NextPage = () => {
         {
             auth && <div className={styles.actionSection}>
                 {sawItBtn(isSaw)}
-                {addToWatchBtn(isAlreadyAdded)}
             </div>
         }
 

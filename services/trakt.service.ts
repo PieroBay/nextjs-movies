@@ -74,11 +74,15 @@ export class TraktService {
             .then((res: AxiosResponse) => res.data.map((v: any) => ({id: v.id, ...v[type]}) as MovieTraktDto));
     }
 
-    public async setToWatched(tmdbId: number): Promise<any> {
+    public async setWatched(tmdbId: number): Promise<any> {
         return this.axios.post(`${environment.TRAKT_URI}sync/history`, {"movies": [{ids: {'tmdb': tmdbId}}]}, {headers: this.headers})
     }
 
-    public async setWatched(tmdbId: number): Promise<any> {
+    public async removeWatched(tmdbId: number): Promise<any> {
+        return this.axios.post(`${environment.TRAKT_URI}sync/history/remove`, {"movies": [{ids: {'tmdb': tmdbId}}]}, {headers: this.headers})
+    }
+
+    public async setToWatched(tmdbId: number): Promise<any> {
         return this.axios.post(`${environment.TRAKT_URI}sync/watchlist`, {"movies": [{ids: {'tmdb': tmdbId}}]}, {headers: this.headers})
     }
 }

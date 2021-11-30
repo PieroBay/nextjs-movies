@@ -7,6 +7,8 @@ import ButtonAppBar from "../components/navbar";
 import { AuthContext, COOKIES_KEY } from "../lib/auth.ctx";
 import { TraktAccessInterface } from "../models/interfaces/trakt/trakt-access.interface";
 import '../styles/globals.css';
+import {getRouterName} from "../lib/routername";
+
 
 function MyApp({Component, pageProps}: AppProps) {
     const [auth, setAuth] = useState<TraktAccessInterface | undefined>(undefined)
@@ -34,7 +36,7 @@ function MyApp({Component, pageProps}: AppProps) {
 
     return <AuthContext.Provider value={{auth, userLoggedIn, userLoggedOut}}>
         <CssBaseline/>
-        <ButtonAppBar title={router.route.replace('/', '')}/>
+        <ButtonAppBar title={getRouterName(router.route)}/>
         <Component {...pageProps} />
     </AuthContext.Provider>
 }
