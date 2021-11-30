@@ -59,7 +59,7 @@ export class TraktService {
     }
 
     public async getMoviesListSearch(search: string): Promise<MovieTraktDto[]> {
-        return this.axios.get(`${environment.TRAKT_URI}movies/trending?limit=10&query=${search}`, {headers: this.headers})
+        return this.axios.get(`${environment.TRAKT_URI}search/movie?query=${search}&fields=title&limit=15`, {headers: this.headers})
             .then((res: AxiosResponse) => res.data.map((v: any) => v.movie as MovieTraktDto));
     }
 

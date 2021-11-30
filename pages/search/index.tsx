@@ -28,17 +28,31 @@ const Search: NextPage<SearchPageProps> = (props: PropsWithChildren<SearchPagePr
     const router = useRouter();
 
     async function onSearchChange(searchText: string) {
-        if (!searchInProgress) {
+        if(!searchText) {
+            setSearchInProgress(true);
+            const movies = [];
+            for (const movieTraktDto of await traktService.getMoviesList(10)) {
+                movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)));
+            }
+            setMovies(movies)
+            setSearchInProgress(false);
+        }
+        if (!searchInProgress && searchText.length >= 3) {
             setSearchInProgress(true);
             lastSearchQueue = '';
             const movies = [];
             for (const movieTraktDto of await traktService.getMoviesListSearch(searchText)) {
-                movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)))
+                try {
+                    movies.push(TraktService.map2movie(movieTraktDto, await tmdbService.getMovieDetails(movieTraktDto.ids.tmdb)));
+                } catch (e) {
+                    console.log(e)
+                }
             }
             setMovies(movies)
             setSearchInProgress(false);
             if (lastSearchQueue) {
-                await onSearchChange(lastSearchQueue)
+                console.log('lastqueue', lastSearchQueue)
+               // await onSearchChange(lastSearchQueue)
             }
         } else {
             lastSearchQueue = searchText;
