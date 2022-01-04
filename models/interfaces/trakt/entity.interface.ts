@@ -16,6 +16,21 @@ export interface TraktIdsDto {
     tvdb?: number;
 }
 
+export interface ProfileTraktDto {
+  username: string;
+  name: string;
+  joined_at: string;
+  location: string;
+  about: string;
+  gender: string;
+  age: number;
+  images: {
+    avatar: {
+      full: string;
+    };
+  };
+}
+
 export interface MovieTraktDto {
     title: string;
     year: number;

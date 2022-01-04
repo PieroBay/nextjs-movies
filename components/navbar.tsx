@@ -1,13 +1,13 @@
-import {Button} from '@mui/material';
+import { Button } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import * as React from 'react';
-import {useAuth} from '../lib/auth.ctx';
-import {TraktService} from '../services/trakt.service';
-import {logoutIcon, searchIcon} from "./icons";
+import { useAuth } from '../lib/auth.ctx';
+import { TraktService } from '../services/trakt.service';
+import { logoutIcon, searchIcon } from "./icons";
 
 export default function ButtonAppBar(props: any) {
     const traktService = React.useMemo<TraktService>(() => new TraktService(axios), [axios]);
@@ -18,6 +18,7 @@ export default function ButtonAppBar(props: any) {
     const loginBtn = <Button sx={{marginLeft: 1}} variant="contained" href={traktService.genOauthLink()}>Login with
         Trakt</Button>;
     const dashBoardBtn = <Button sx={{marginLeft: 1}} variant="contained" href="/">Dashboard</Button>;
+    const profileBtn = <Button sx={{marginLeft: 1}} variant="contained" href="/profile">Profile</Button>;
 
 
     return (
@@ -30,6 +31,7 @@ export default function ButtonAppBar(props: any) {
                     <Button sx={{marginLeft: 1}} variant="contained" href="/search" endIcon={searchIcon}>Search a
                         film</Button>
                     {auth && dashBoardBtn}
+                    {auth && profileBtn}
                     {!auth ? loginBtn : logoutBtn}
                 </Toolbar>
             </AppBar>
