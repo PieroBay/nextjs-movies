@@ -27,7 +27,6 @@ const Login: NextPage = () => {
 
     useEffect(() => {
         if(auth) {
-            console.log(auth)
             router.push('/').then()
         }
     }, [auth])

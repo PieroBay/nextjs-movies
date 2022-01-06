@@ -102,7 +102,6 @@ export class TraktService {
   }
 
   public async getWatchList(type: EntityTypeEnum): Promise<MovieTraktDto[]> {
-    console.log(this.auth);
     return this.axios
       .get(`${environment.TRAKT_URI}sync/watchlist/${type}s`, {
         headers: this.headers
