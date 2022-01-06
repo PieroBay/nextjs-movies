@@ -43,5 +43,5 @@ export function getDetailTemplate(entity: MovieTmdbDto): JSX.Element {
 
 
 function getChip(genres: Genres[]) {
-    return <div style={{marginBottom: 16}}>{genres.map(g => <Chip sx={{marginRight: 2}} label={g.name}/>)}</div>
+    return <div style={{marginBottom: 16}}>{genres.map((g, id) => <Chip key={id} sx={{marginRight: 2}} label={g.name}/>)}</div>
 }

@@ -1,4 +1,5 @@
 import { EntityTypeEnum } from "../../enum/entity-type.enum";
+import { Gender } from "../../enum/gender.enum";
 
 export interface EntityListTraktDto {
     title: string;
@@ -22,7 +23,7 @@ export interface ProfileTraktDto {
   joined_at: string;
   location: string;
   about: string;
-  gender: string;
+  gender?: Gender;
   age: number;
   images: {
     avatar: {
