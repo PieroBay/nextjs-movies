@@ -23,7 +23,7 @@ export interface ProfileTraktDto {
   joined_at: string;
   location: string;
   about: string;
-  gender?: Gender;
+  gender: Gender;
   age: number;
   images: {
     avatar: {
