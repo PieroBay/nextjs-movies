@@ -10,8 +10,8 @@ const Profile: NextPage = (props: PropsWithChildren<any>) => {
     const profile = props.profile;
     const router = useRouter();
 
-    async function goBack() {
-        await router.back();
+    function goBack() {
+        router.back();
     }
 
     return <Container>
